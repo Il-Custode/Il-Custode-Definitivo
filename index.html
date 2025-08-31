@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Il Custode — Benvenuto</title>
 
-  <!-- Stile globale (cornice + pergamena per tutte le pagine in root) -->
   <link rel="stylesheet" href="assets/style.css">
 
   <style>
@@ -72,14 +71,13 @@
       font-family:'Papyrus', fantasy;
     }
     .btn:hover{ filter:brightness(.95); }
-    @keyframes fadeIn{ from{ opacity:0; transform: translateY(6px); } to{ opacity:1; transform: none; } }
   </style>
 </head>
 <body>
   <div class="cornice">
     <div class="wrap">
       <div class="mago">
-        <img id="imgMago" src="./assets/img/mago.png" alt="Il Custode (mago)" />
+        <img id="imgMago" src="assets/img/mago.png" alt="Il Custode (mago)" />
       </div>
 
       <div id="pergamena" class="pergamena" role="dialog" aria-label="Benvenuto">
@@ -92,10 +90,9 @@
     </div>
   </div>
 
-  <!-- i18n prima degli script della pagina -->
+  <!-- i18n -->
   <script src="assets/js/i18n.js"></script>
-  <!-- Back button globale (escluso automaticamente su welcome/index/menu) -->
-  <script defer src="assets/js/back-button.js"></script>
+
   <script>
     (function(){
       const fraseEl   = document.getElementById('frase');
@@ -104,23 +101,23 @@
       const btnAvanti = document.getElementById('btnAvanti');
 
       function applyTexts(){
+        // Applica traduzioni a tutti gli elementi con data-i18n
         window.i18n?.apply?.(document);
+        // Frase random dalla chiave welcome.greetings
         fraseEl.textContent = window.i18n?.pick?.('welcome.greetings') || '';
+        // Titolo finestra dalla lingua se disponibile
         if (window.i18n?.t) {
           const v = window.i18n.t('welcome.page_title');
           if (v && v !== 'welcome.page_title') document.title = v;
         }
       }
 
-      // FIX: ora va alla pagina 2 (login.html) invece di richiamare index.html
       function goNext(){ window.location.href = 'pages/login.html'; }
 
       document.addEventListener('DOMContentLoaded', ()=>{
         imgMago.classList.add('img-in');
         setTimeout(()=> pergamena.classList.add('pergamena-in'), 1200);
-
         applyTexts();
-
         btnAvanti.addEventListener('click', goNext);
         document.addEventListener('keydown', (e)=>{ if(e.key==='Enter') goNext(); });
       });
