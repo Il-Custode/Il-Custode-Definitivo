@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Il Custode — Benvenuto</title>
 
-  <!-- Stile globale -->
+  <!-- Stile globale (cornice + pergamena per tutte le pagine in root) -->
   <link rel="stylesheet" href="assets/style.css">
 
   <style>
@@ -72,6 +72,7 @@
       font-family:'Papyrus', fantasy;
     }
     .btn:hover{ filter:brightness(.95); }
+    @keyframes fadeIn{ from{ opacity:0; transform: translateY(6px); } to{ opacity:1; transform: none; } }
   </style>
 </head>
 <body>
@@ -93,9 +94,8 @@
 
   <!-- i18n prima degli script della pagina -->
   <script src="assets/js/i18n.js"></script>
-  <!-- Pulsante Indietro globale: questa pagina sarà esclusa dalla comparsa automatica -->
+  <!-- Back button globale (escluso automaticamente su welcome/index/menu) -->
   <script defer src="assets/js/back-button.js"></script>
-
   <script>
     (function(){
       const fraseEl   = document.getElementById('frase');
@@ -104,22 +104,18 @@
       const btnAvanti = document.getElementById('btnAvanti');
 
       function applyTexts(){
-        // Applica traduzioni se i18n è presente
         window.i18n?.apply?.(document);
-        // Frase casuale speciale per la welcome
         fraseEl.textContent = window.i18n?.pick?.('welcome.greetings') || '';
-        // Titolo finestra se disponibile
         if (window.i18n?.t) {
           const v = window.i18n.t('welcome.page_title');
           if (v && v !== 'welcome.page_title') document.title = v;
         }
       }
 
-      // Vai alla pagina 2 (login)
+      // FIX: ora va alla pagina 2 (login.html) invece di richiamare index.html
       function goNext(){ window.location.href = 'pages/login.html'; }
 
       document.addEventListener('DOMContentLoaded', ()=>{
-        // Effetti d’ingresso
         imgMago.classList.add('img-in');
         setTimeout(()=> pergamena.classList.add('pergamena-in'), 1200);
 
@@ -129,7 +125,6 @@
         document.addEventListener('keydown', (e)=>{ if(e.key==='Enter') goNext(); });
       });
 
-      // Aggiorna i testi quando cambia lingua
       window.addEventListener('i18n:change', applyTexts);
     })();
   </script>
