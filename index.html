@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Il Custode — Benvenuto</title>
+
+  <!-- Stile globale -->
+  <link rel="stylesheet" href="assets/style.css">
+
+  <style>
+    :root{ --legno:#4b3621; --pelle:#d2b48c; --inchiostro:#3e2f1c; --pergamena:#fff3d4; }
+    *{ box-sizing:border-box }
+    html,body{ height:100% }
+    body{
+      margin:0; font-family:'Papyrus', fantasy; color:var(--inchiostro);
+      background:
+        radial-gradient(80% 60% at 50% 40%, rgba(0,0,0,.06), transparent 70%),
+        var(--pergamena)
+        url('assets/sfondo-pergamena-decor.svg') no-repeat center/cover fixed;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .cornice{
+      border:40px solid transparent;
+      -webkit-border-image:url('assets/cornice-legno.svg') 40 stretch;
+      border-image:url('assets/cornice-legno.svg') 40 stretch;
+      width:min(1100px, 96vw); min-height:70vh; display:flex; align-items:center; justify-content:center;
+      padding:20px;
+      background: linear-gradient(180deg, rgba(255,243,212,.35), rgba(255,243,212,.15));
+      border-radius:6px;
+    }
+    .wrap{ width:100%; display:grid; gap:20px; grid-template-columns: 1fr; align-items:center; }
+    @media (min-width: 900px){ .wrap{ grid-template-columns: 1fr 1.2fr; } }
+    .mago{ display:flex; align-items:center; justify-content:center; padding:10px; }
+    .mago img{
+      width: min(380px, 70vw); max-width:100%;
+      border:6px solid var(--legno); border-radius:16px; background:#fff9;
+      box-shadow:0 8px 22px rgba(0,0,0,.25);
+      opacity: 0; transform: translateY(8px) scale(0.98);
+    }
+    .mago img.img-in { animation: fadeInImg 1.2s ease-out forwards; }
+    @keyframes fadeInImg { to { opacity: 1; transform: none; } }
+    .pergamena{
+      position:relative; overflow:visible; background: rgba(255,248,220,.95);
+      border:4px solid var(--legno); border-radius:16px;
+      padding:22px; box-shadow:0 8px 22px rgba(0,0,0,.2);
+      transform-origin: top center; transform: scaleY(0); opacity: 0;
+    }
+    .pergamena.pergamena-in { animation: unroll .9s ease-out forwards; }
+    @keyframes unroll { 0% { transform: scaleY(0); opacity: 0; } 100% { transform: scaleY(1); opacity: 1; } }
+    .pergamena::after{
+      content:""; position:absolute; left:-18px; top:48%; transform: translateY(-50%);
+      border-top: 14px solid transparent; border-bottom: 14px solid transparent; border-right: 18px solid rgba(255,248,220,.95);
+      filter: drop-shadow(-2px 2px 0 rgba(0,0,0,.15));
+    }
+    .pergamena::before{
+      content:""; position:absolute; left:-22px; top:48%; transform: translateY(-50%);
+      border-top: 16px solid transparent; border-bottom: 16px solid transparent; border-right: 22px solid var(--legno);
+    }
+    @media (max-width: 899px){
+      .pergamena::after{ left:50%; top:-18px; transform: translateX(-50%);
+        border-left:14px solid transparent; border-right:14px solid transparent; border-bottom:18px solid rgba(255,248,220,.95); border-top:none; filter: drop-shadow(0 -2px 0 rgba(0,0,0,.15)); }
+      .pergamena::before{ left:50%; top:-22px; transform: translateX(-50%);
+        border-left:16px solid transparent; border-right:16px solid transparent; border-bottom:22px solid var(--legno); border-top:none; }
+    }
+    .titolo{ font-size:28px; margin:0 0 8px 0; }
+    .testo{ font-size:20px; line-height:1.5; margin:12px 0 22px; min-height:4.5em; }
+    .actions{ display:flex; gap:10px; flex-wrap:wrap; }
+    .btn{
+      background:var(--pelle); border:3px solid var(--legno);
+      padding:10px 16px; font-size:18px; border-radius:12px; cursor:pointer;
+      font-family:'Papyrus', fantasy;
+    }
+    .btn:hover{ filter:brightness(.95); }
+  </style>
+</head>
+<body>
+  <div class="cornice">
+    <div class="wrap">
+      <div class="mago">
+        <img id="imgMago" src="./assets/img/mago.png" alt="Il Custode (mago)" />
+      </div>
+
+      <div id="pergamena" class="pergamena" role="dialog" aria-label="Benvenuto">
+        <h1 class="titolo" data-i18n="home.wizard_title">Il Custode ti osserva</h1>
+        <div id="frase" class="testo"></div>
+        <div class="actions">
+          <button id="btnAvanti" class="btn" type="button" data-i18n="welcome.enter">Entra</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- i18n prima degli script della pagina -->
+  <script src="assets/js/i18n.js"></script>
+  <!-- Pulsante Indietro globale: questa pagina sarà esclusa dalla comparsa automatica -->
+  <script defer src="assets/js/back-button.js"></script>
+
+  <script>
+    (function(){
+      const fraseEl   = document.getElementById('frase');
+      const imgMago   = document.getElementById('imgMago');
+      const pergamena = document.getElementById('pergamena');
+      const btnAvanti = document.getElementById('btnAvanti');
+
+      function applyTexts(){
+        // Applica traduzioni se i18n è presente
+        window.i18n?.apply?.(document);
+        // Frase casuale speciale per la welcome
+        fraseEl.textContent = window.i18n?.pick?.('welcome.greetings') || '';
+        // Titolo finestra se disponibile
+        if (window.i18n?.t) {
+          const v = window.i18n.t('welcome.page_title');
+          if (v && v !== 'welcome.page_title') document.title = v;
+        }
+      }
+
+      // Vai alla pagina 2 (login)
+      function goNext(){ window.location.href = 'pages/login.html'; }
+
+      document.addEventListener('DOMContentLoaded', ()=>{
+        // Effetti d’ingresso
+        imgMago.classList.add('img-in');
+        setTimeout(()=> pergamena.classList.add('pergamena-in'), 1200);
+
+        applyTexts();
+
+        btnAvanti.addEventListener('click', goNext);
+        document.addEventListener('keydown', (e)=>{ if(e.key==='Enter') goNext(); });
+      });
+
+      // Aggiorna i testi quando cambia lingua
+      window.addEventListener('i18n:change', applyTexts);
+    })();
+  </script>
+</body>
+</html>
